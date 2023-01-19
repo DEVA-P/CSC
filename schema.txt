@@ -1,0 +1,31 @@
+create database CSC;
+
+create table product(
+     productId int,
+     productName varchar(255),
+     ProductPrintName varchar(255),
+     ProductCode varchar(255),
+     tax_perc numeric,
+     categoryId int,
+     unit varchar(10),
+     salePrice numeric,
+     mrp numeric,
+     discount numeric,
+     Isactice boolean,
+     costPrice numeric,
+     status boolean,
+     primary key(productId),
+     unique(productName),
+     unique(productPrintName)
+     );
+
+
+     create table category(
+        categoryId int,
+        categoryName varchar(255),
+        categoryCode int,
+        status boolean,
+        primary key(categoryId),
+        unique(categoryName),
+        unique(categoryCode)
+     );
