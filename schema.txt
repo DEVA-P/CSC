@@ -29,3 +29,16 @@ create table product(
         unique(categoryName),
         unique(categoryCode)
      );
+
+     create table users(
+      userId int unique,
+      userName varchar(255),
+      password varchar(255),
+      isAdmin bool,
+      status boolean,
+      branchId varchar(255),
+      primary key(userName)
+     );
+     
+INSERT INTO users(userId, userName, password, isAdmin, status, branchId) 
+VALUES(1, 'deva', '1234', true, true, 'tn001');

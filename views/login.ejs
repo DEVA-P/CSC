@@ -102,8 +102,8 @@
             <input
               type="text"
               class="form-control"
-              name="email"
-              placeholder="User Id"
+              name="userName"
+              placeholder="User Name"
               required="required"
               autofocus
             />
@@ -155,10 +155,10 @@
       }
       function submitHandler(event) {
         event.preventDefault();
-        const email = document.querySelector("[name='email']").value;
+        const userName = document.querySelector("[name='userName']").value;
         const password = document.querySelector("[name='password']").value;
         const data = {
-          email,
+          userName,
           password,
         };
         fetch("/login", {
@@ -170,8 +170,7 @@
           body: JSON.stringify(data),
         })
           .then(handleError)
-          .then((data) => {
-            console.log(data);
+          .then((data) => { 
             window.location.href = "/";
             // if the flow comes here then the credentials are right
             // redirect user to dashboard page

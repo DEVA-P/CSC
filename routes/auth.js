@@ -1,55 +1,51 @@
-const express = require("express");  
+const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken"); 
+const jwt = require("jsonwebtoken");
+const client = require("../db");
 
 router.get("/", async function (req, res) {
-//   if (req.cookies.jwt_token) res.redirect("/home");
-//   else 
-res.render("login");
+  if (req.cookies && req.cookies.jwt_token) {
+    res.redirect("/");
+  } else {
+    res.render("login");
+  }
 });
 
-router.post("/", async function (req, res) {
-  const { email, password } = req.body;
-  // let value = {}
+router.post("/", async function (req, res) { 
+
+  const userName = req.body.userName;
+  const password = req.body.password; 
+
   try {
-    value = await loginSchema.validateAsync({ email, password });
-  } catch (error) {
-    const errorMsg = {
-      msg: error.details[0].message,
-      details: req.body,
-      errorCode: 0,
-    };
-    console.log(errorMsg);
-    return res.render("login", { err: errorMsg });
-  }
-  const user = await userModel.findOne({ email: req.body.email });
-  if (!user) {
-    const errorMsg = {
-      msg: "Invalid username or password",
-      details: req.body,
-      errorCode: 0,
-    };
-    console.log(errorMsg);
-    return res.render("login", { err: errorMsg });
-  }
+    // Search for a user with the given email and password
+    const result = await client.query(
+      "SELECT userId, userName, isAdmin FROM users WHERE userName = $1 AND password = $2",
+      [userName, password]
+    ); 
 
-  const resultofsalt = await bcrypt.compare(req.body.password, user.password);
-  if (!resultofsalt) {
-    const errorMsg = {
-      msg: "Invalid username or password",
-      details: req.body,
-      errorCode: 0,
-    };
-    console.log(errorMsg);
-    return res.render("login", { err: errorMsg });
-  }
-  const token = user.generateToken();
-  res.cookie("jwt_token", token, { maxAge: 604800000 });
-  res.redirect("/home");
+    // If the user is found, generate a JWT
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
+      const payload = { userId: user.userid, userName: user.username , branchId: user.branchid}; 
+      const jwt_token = jwt.sign(payload, process.env.JWT_SECRET);
+
+      // Send the JWT in the response
+      console.log("login success", jwt_token);
+      res.cookie("jwt_token", jwt_token, { maxAge: 604800000,httpOnly: true });  
+      res.json(jwt_token);
+
+    } else {
+      // If the user is not found, return an error
+      console.log("login failure");
+      res.status(401).json({ error: "Invalid userName or password" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }  
 });
-router.get("/logout", (req, res) => {
-  res.clearCookie("jwt_token");
-  res.redirect("/auth");
-});
+
+
+
 module.exports = router;
