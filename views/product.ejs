@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<title>BRANCH DASHBOARD</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<style>
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+        font-family: "Raleway", sans-serif
+    }
+
+    /* .add-icon{
+    position: fixed;
+    bottom: 2.5%;
+    right: 2.5%;
+    z-index: 2; 
+}*/
+
+    /* Add padding to containers */
+    .container {
+        padding: 16px;
+        background-color: white;
+    }
+
+    .newProduct .material-icons {
+        font-size: 2.8rem;
+        color: cadetblue;
+        cursor: pointer;
+    }
+
+    button {
+        background-color: transparent;
+        border: none;
+    }
+
+    /* Full-width input fields */
+    input[type=text],
+    input[type=password],
+    input[type=number],
+    input[type=week] {
+        width: 100%;
+        padding: 15px;
+        margin: 5px 0 22px 0;
+        display: inline-block;
+        border: none;
+        background: #f1f1f1;
+    }
+
+    input[type=text]:focus,
+    input[type=password]:focus,
+    input[type=number]:focus,
+    input[type=week]:focus {
+        background-color: #ddd;
+        outline: none;
+    }
+
+    .registerbtn {
+        background-color: #04AA6D;
+        color: white;
+        padding: 16px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        opacity: 0.9;
+    }
+
+    .alert {
+        padding: 20px;
+        background-color: #f44336;
+        color: white;
+        position: fixed;
+        width: 100%;
+        top: 75px;
+        text-align: center;
+        z-index: 1;
+    }
+
+    .closebtn {
+        margin-left: 15px;
+        color: white;
+        font-weight: bold;
+        float: right;
+        font-size: 22px;
+        line-height: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .closebtn:hover {
+        color: black;
+    }
+</style>
+
+<body class="w3-light-grey">
+
+    <div class="w3-bar w3-black w3-padding-large">
+        <a href="/" class="w3-bar-item w3-button rounded"><b>
+                <%=user.branchId%>BRANCH'S DASHBOARD
+            </b></a>
+
+
+
+        <div class="w3-dropdown-hover w3-right">
+            <button class="w3-button w3-black rounded"><b>
+                    <%=user.userName%>
+                </b>
+            </button>
+
+            <img class="mr-2 w3-circle" src="img/avatar.jpg" width="40" height="40" alt="avatar">
+
+            <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
+                <a onclick="document.getElementById('edit-profile').style.display='block'"
+                    class="w3-bar-item w3-button w3-padding-large">Edit profile</a>
+                <!-- #region for edit profile of user-->
+                <div id="edit-profile" class="w3-modal">
+                    <div class="w3-modal-content w3-card-4">
+                        <form action="#">
+                            <header class="w3-container w3-teal">
+                                <span onclick="document.getElementById('edit-profile').style.display='none'"
+                                    class="w3-button w3-display-topright w3-xlarge">&times;</span>
+                                <h2>EDIT PROFILE</h2>
+                            </header>
+                            <div class="container">
+                                <label for="name"><b>Username</b></label>
+                                <input type="text" name="name" id="name" required>
+                                <!-- <label for="about"><b>Description</b></label>
+                <input type="text" placeholder="Enter course description" name="about" id="about" required> -->
+                                <button type="submit" class="registerbtn">Edit profile</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <a onclick="logoutHandler()" class="w3-bar-item w3-button w3-padding-large">Log out</a>
+            </div>
+        </div>
+
+        <button class="newProduct w3-right" onclick="newProduct();">
+            <span class="material-icons">
+                add_circle
+            </span>
+        </button>
+
+        <a href="/product" class="w3-bar-item w3-button w3-right"><b>Product</b></a>
+
+        <div class="w3-clear"></div>
+    </div>
+
+
+
+    <div class="w3-content" style="max-width:1400px">
+
+        <header class="w3-container w3-center w3-padding-32">
+            <h1><b>PRODUCTS PRESENT</b></h1>
+            <p>Welcome to the CSC SHOP</p>
+        </header>
+
+        <div class="w3-row">
+            <div class="w3-col container s12" id="courses-container">
+
+                <!-- #region student details-->
+                <% if(success===1){ %>
+                    <div class="w3-content" style="max-width:1400px">
+                        <div class="w3-container">
+                            <h1><b>CATEGORY DETAILS</b></h1>
+                            <input autofocus class="w3-input w3-border w3-padding" type="text"
+                                placeholder="Search for category names.." id="myInput" onkeyup="myFunction()">
+
+                            <table class="w3-table-all w3-margin-top" id="myTable">
+                                <tr>
+                                    <th style="width:10%;">PRODUCT ID</th>
+                                    <th style="width:10%;">PRODUCT CODE</th>
+                                    <th style="width:10%;">PRODUCT NAME</th>
+                                    <th style="width:10%;">PRINT NAME</th>
+                                    <th style="width:10%;">CP</th>
+                                    <th style="width:10%;">SP</th>
+                                    <th style="width:10%;">MRP</th>
+                                    <th style="width:10%;">DISCOUT</th>
+                                    <th style="width:10%;">TAX</th>
+                                    <th style="width:10%;">UNIT</th>
+                                    <th style="width:10%;">STATUS</th>
+                                </tr>
+                                <% product.forEach(product=> { %>
+                                    <tr>
+                                        <td>
+                                            <%=product.productid%>
+                                        </td>
+                                        <td>
+                                            <%=product.productcode%>
+                                        </td>
+                                        <td>
+                                            <%=product.productname%>
+                                        </td>
+                                        <td>
+                                            <%=product.printname%>
+                                        </td>
+                                        <td>
+                                            <%=product.costprice%>
+                                        </td>
+                                        <td>
+                                            <%=product.saleprice%>
+                                        </td>
+                                        <td>
+                                            <%=product.mrp%>
+                                        </td>
+                                        <td>
+                                            <%=product.discount%>
+                                        </td>
+                                        <td>
+                                            <%=product.taxperc%>
+                                        </td>
+                                        <td>
+                                            <%=product.unit%>
+                                        </td>
+                                        <td>
+                                            <%=product.status%>
+                                        </td>
+                                    </tr>
+                                    <%})%>
+                            </table>
+                        </div>
+                        <% } else{%>
+                            <h1>Something went wrong <%=err%>!</h1>
+                            <%} %>
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!--ALERT -->
+    <div class="alert" id="aler">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        <div id="text"></div>
+    </div>
+    <!--ALERT -->
+
+    <!-- newProduct -->
+    <div id="addNewProductModal" class="w3-modal">
+        <div class="w3-modal-content w3-card-4">
+            <form id="course_form" onsubmit="productFormSubmitHandler(event);">
+                <header class="w3-container w3-teal">
+                    <span onclick="document.getElementById('addNewProductModal').style.display='none'"
+                        class="w3-button w3-display-topright w3-xlarge">&times;</span>
+                    <h2 id="form-title">ADD NEW PRODUCT</h2>
+                </header>
+                <div class="container">
+                    <label for="product_name"><b>Product Name</b></label>
+                    <input type="text" placeholder="Product Name" name="product_name" id="product_name" required>
+                    <label for="print_name"><b>Print Name</b></label>
+                    <input type="text" placeholder="Print Name" name="print_name" required>
+                    <label for="product_code"><b>Product Code</b></label>
+                    <input type="text" placeholder="product_code" name="product_code" id="product_code" required>
+                    <label for="cost_price"><b>Cost Price</b></label>
+                    <input type="number" placeholder="Cost Price" name="cost_price" id="cost_price" required>
+                    <label for="selling_price"><b>Selling Price</b></label>
+                    <input type="number" placeholder="Selling Price" name="selling_price" id="selling_price" required>
+                    <label for="mrp"><b>MRP Price</b></label>
+                    <input type="number" placeholder="MRP" name="mrp" id="mrp" required>
+                    <label for="discount"><b>Discount Perc</b></label>
+                    <input type="number" placeholder="Discount" name="discount" id="discount" required>
+                    <label for="tax"><b>Tax Perc</b></label>
+                    <input type="number" placeholder="Tax Perc" name="tax" id="tax" required>
+                    <label for="unit"><b>Unit</b></label>
+                    <select name="unit" id="unit">
+                        <option value="1">Rupee</option>
+                        <option value="2">Dollar</option>
+                        <!-- <option value="3">3</option> -->
+                    </select>
+                    <button type="submit" id="form-button" class="registerbtn rounded">Submit</button>
+                </div>
+
+                <footer class="w3-container w3-teal">
+                    <p>please verify before submission</p>
+                </footer>
+            </form>
+        </div>
+    </div>
+    <!-- newProduct -->
+
+</body>
+<script>
+
+    var aler = document.getElementById("aler");
+    aler.style.display = "none";
+    let type = 'new';
+    const modal1 = document.getElementById('edit-profile');
+    const modal2 = document.getElementById('addNewProductModal');
+    const table = document.getElementById("myTable");   
+
+
+    function productFormSubmitHandler(event) {
+        event.preventDefault();
+        if (type === 'new')
+            addNewProduct();
+        else if (type === 'edit')
+            editProduct();
+    }
+
+    function addNewProduct() {
+        const product_name = document.querySelector("[name='product_name']").value;
+        const print_name = document.querySelector("[name='print_name']").value;
+        const product_code = document.querySelector("[name='product_code']").value;
+        const cost_price = document.querySelector("[name='cost_price']").value;
+        const selling_price = document.querySelector("[name='selling_price']").value;
+        const mrp = document.querySelector("[name='mrp']").value;
+        const discount = document.querySelector("[name='discount']").value;
+        const tax = document.querySelector("[name='tax']").value;
+        const unit = document.querySelector("[name='unit']").value;
+
+        const data = {
+            product_name, print_name, product_code, cost_price, selling_price, mrp, discount, tax, unit
+        }
+        console.log(data);
+
+        fetch('/product/addNewProduct', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(handleError)
+            .then(res => {
+                console.log(res)
+                modal2.style.display = "none";
+                aler.style.display = "block";
+                aler.style.background = "green";
+                text.style.display = "block";
+                msg = "<strong>Success </strong>   Product Added Successfully";
+                text.innerHTML = msg;
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            })
+            .catch(err => {
+                console.log(err)
+                modal2.style.display = "none";
+                aler.style.display = "block";
+                text.style.display = "block";
+                msg = "<strong>Danger !</strong>    " + err;
+                text.innerHTML = msg;
+            })
+    }
+
+
+    function newProduct() {
+        document.getElementById('addNewProductModal').style.display = 'block'
+        //type = 'new';
+        document.getElementById('course_form').reset();
+        //formButton.innerText = 'Submit';
+        //formTitle.innerText = 'COURSE CREATION';
+    }
+
+    async function handleError(res) {
+        if (!res.ok) {
+            res = await res.json()
+            throw new Error(res.msg)
+        }
+        else return res.json()
+    }
+
+    function logoutHandler() {
+        fetch('/logout')
+            .then(handleError)
+            .then(res => {
+                window.location.href = "/login"
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    function myFunction() {
+        var input, filter, table, tr, td, i;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+          td1 = tr[i].getElementsByTagName("td")[1];
+          td2 = tr[i].getElementsByTagName("td")[2];  
+          if (td1||td2) {
+            txtValue = td2.innerText;
+            txtValue1 = td1.innerText;
+            if (txtValue1.toUpperCase().indexOf(filter)>-1 || txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+
+    window.onclick = function (event) {
+        if (event.target == modal1 || event.target == modal2 || event.target == modal3) {
+            modal1.style.display = "none";
+            modal2.style.display = "none";
+        }
+    }
+</script>
+
+</html>

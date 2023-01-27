@@ -81,7 +81,12 @@
   .alert {
     padding: 20px;
     background-color: #f44336;
-    color: white;
+    color: white;  
+    position: fixed;   
+    width: 100%;  
+    top: 75px;
+    text-align: center;
+    z-index: 1;
   }
 
   .closebtn {
@@ -154,6 +159,8 @@
         add_circle
       </span>
     </button>
+    <a href="/product" class="w3-bar-item w3-button w3-right"><b>Product</b></a>
+    <a href="/category" class="w3-bar-item w3-button w3-right"><b>Category</b></a>
 
     <div class="w3-clear"></div>
   </div>
@@ -185,7 +192,7 @@
   <!-- newProduct -->
   <div id="addNewProductModal" class="w3-modal">
     <div class="w3-modal-content w3-card-4">
-      <form id="course_form" onsubmit="formSubmitHandler(event);">
+      <form id="course_form" onsubmit="productFormSubmitHandler(event);">
         <header class="w3-container w3-teal">
           <span onclick="document.getElementById('addNewProductModal').style.display='none'"
             class="w3-button w3-display-topright w3-xlarge">&times;</span>
@@ -228,7 +235,7 @@
   <!-- newCategory -->
   <div id="addNewCategoryModal" class="w3-modal">
     <div class="w3-modal-content w3-card-4">
-      <form id="category_form" onsubmit="formSubmitHandler(event);">
+      <form id="category_form" onsubmit="categoryFormSubmitHandler(event);">
         <header class="w3-container w3-teal">
           <span onclick="document.getElementById('addNewCategoryModal').style.display='none'"
             class="w3-button w3-display-topright w3-xlarge">&times;</span>
@@ -237,8 +244,8 @@
         <div class="container">
           <label for="category_name"><b>Category Name</b></label>
           <input type="text" placeholder="Category Name" name="category_name" id="category_name" required>
-          <label for="search_code"><b>Search Code</b></label>
-          <input type="text" placeholder="Search Code" name="search_code" id="search_code" >
+          <label for="category_code"><b>Search Code</b></label>
+          <input type="text" placeholder="Search Code for Category" name="category_code" id="category_code" >
 
           <button type="submit" id="form-button" class="registerbtn rounded">Submit</button>
         </div>
@@ -256,10 +263,19 @@
 
   var aler = document.getElementById("aler");
   aler.style.display = "none";
+  let type = 'new';
   const modal1 = document.getElementById('edit-profile');
   const modal2 = document.getElementById('addNewProductModal');
   const modal3 = document.getElementById('addNewCategoryModal');
 
+
+  function productFormSubmitHandler(event){
+    event.preventDefault();
+    if(type === 'new')
+      addNewProduct();
+    else if(type === 'edit')
+      editProduct();
+  }
 
   function addNewProduct() {
       const product_name = document.querySelector("[name='product_name']").value;
@@ -277,7 +293,7 @@
       }
       console.log(data);
 
-    fetch('/addNewProduct', {
+    fetch('/product/addNewProduct', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -287,7 +303,7 @@
       .then(handleError)
       .then(res => {
         console.log(res)
-        modal.style.display = "none";
+        modal2.style.display = "none";
         aler.style.display = "block";
         aler.style.background = "green";
         text.style.display = "block";
@@ -299,13 +315,58 @@
       })
       .catch(err => {
         console.log(err)
-        modal.style.display = "none";
+        modal2.style.display = "none";
         aler.style.display = "block";
         text.style.display = "block";
         msg = "<strong>Danger !</strong>    " + err;
         text.innerHTML = msg;
       })
   }
+
+
+  function categoryFormSubmitHandler(event){  
+    event.preventDefault();
+    if(type === 'new')
+      addNewCategory();
+    else if(type === 'edit')
+      editCategory();
+  }
+
+  function addNewCategory() {
+    const categoryname = document.querySelector("[name='category_name']").value;
+    const categorycode = document.querySelector("[name='category_code']").value;  
+
+    const data = {  
+      categoryname, categorycode
+    } 
+
+  fetch('/category/addNewCategory', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+    .then(handleError)
+    .then(res => { 
+      modal3.style.display = "none";
+      aler.style.display = "block";
+      aler.style.background = "green";
+      text.style.display = "block";
+      msg = "<strong>Success </strong>   Category Added Successfully";
+      text.innerHTML = msg;
+      setTimeout(() => {
+        location.reload();
+      }, 2000);
+    })
+    .catch(err => { 
+      modal3.style.display = "none";
+      aler.style.display = "block";
+      text.style.display = "block";
+      msg = "<strong>Danger !</strong>    " + err;
+      text.innerHTML = msg;
+    })
+}
 
 
   function newProduct() {

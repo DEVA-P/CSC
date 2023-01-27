@@ -16,6 +16,7 @@ router.post("/", async function (req, res) {
 
   const userName = req.body.userName;
   const password = req.body.password; 
+  console.log(req.body)
 
   try {
     // Search for a user with the given email and password

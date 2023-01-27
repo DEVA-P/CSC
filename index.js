@@ -4,6 +4,7 @@ const https = require("https");
 const authRoute = require("./routes/auth");
 const logoutRoute = require("./routes/logout");
 const productRoute = require("./routes/product");
+const categoryRoute = require("./routes/category");
 const sessionValidation = require("./Services/middleware/sessionValidation");
 const client = require("./db");
 const cookieParser = require("cookie-parser");
@@ -19,7 +20,8 @@ app.use(express.static(__dirname + "/public"));
 app.use("/login", authRoute);
 // app.use("/register", authRoute);
 app.use("/logout", logoutRoute);
-app.use("/addNewProduct", productRoute);
+app.use("/product", productRoute);
+app.use("/category", categoryRoute);
 app.get("/", sessionValidation, async function (req, res) {
   res.render("home", { user: req.user });
 });

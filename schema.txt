@@ -5,7 +5,7 @@ create table product(
      productName varchar(255),
      ProductPrintName varchar(255),
      ProductCode varchar(255),
-     tax_perc numeric,
+     taxPerc numeric,
      categoryId int,
      unit varchar(10),
      salePrice numeric,
@@ -25,6 +25,7 @@ create table product(
         categoryName varchar(255),
         categoryCode int,
         status boolean,
+
         primary key(categoryId),
         unique(categoryName),
         unique(categoryCode)
@@ -40,5 +41,5 @@ create table product(
       primary key(userName)
      );
      
-INSERT INTO users(userId, userName, password, isAdmin, status, branchId) 
+INSERT INTO users(userid, username, password, a, status, branchid) 
 VALUES(1, 'deva', '1234', true, true, 'tn001');
