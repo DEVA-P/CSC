@@ -13,6 +13,7 @@ create table product(
      discount numeric,
      Isactice boolean,
      costPrice numeric,
+     discount_type int
      status boolean,
      primary key(productId),
      unique(productName),
@@ -43,3 +44,133 @@ create table product(
      
 INSERT INTO users(userid, username, password, a, status, branchid) 
 VALUES(1, 'deva', '1234', true, true, 'tn001');
+
+
+CREATE TYPE group_type_dt AS ENUM ('Cr', 'Dr');
+
+CREATE TABLE public.acc_groups
+(
+    group_id serial,
+    group_name character varying COLLATE pg_catalog."default",
+    group_short character varying COLLATE pg_catalog."default",
+    parent_group integer NOT NULL, 
+    company_id integer,
+    group_type group_type_dt NOT NULL,
+    group_default boolean DEFAULT false,
+    sub_group_codes int[] Not NULL,
+    status boolean DEFAULT true, 
+    CONSTRAINT acc_groups_pkey PRIMARY KEY (group_id)
+)
+
+CREATE TABLE public.acc_ledgers
+(
+    ledger_code serial,
+    company_id integer NOT NULL,
+    acc_group integer NOT NULL,
+    ledger_short character varying COLLATE pg_catalog."default",
+    ledger_name character varying COLLATE pg_catalog."default",
+    ledger_add1 character varying COLLATE pg_catalog."default",
+    ledger_add2 character varying COLLATE pg_catalog."default",
+    ledger_add3 character varying COLLATE pg_catalog."default",
+    ledger_pincode character varying COLLATE pg_catalog."default",
+    ledger_email character varying COLLATE pg_catalog."default",
+    ledger_tel character varying COLLATE pg_catalog."default",
+    ledger_phone character varying COLLATE pg_catalog."default", 
+    gst_type character varying COLLATE pg_catalog."default" NOT NULL,
+    gst_no character varying COLLATE pg_catalog."default",
+    pan_no character varying COLLATE pg_catalog."default", 
+    bill_balance boolean DEFAULT false,
+    state_name character varying COLLATE pg_catalog."default" NOT NULL, 
+    state_code character varying(2) COLLATE pg_catalog."default" NOT NULL,  
+    status boolean,      
+    CONSTRAINT pkey_acc_ledgers_ledger_code PRIMARY KEY (ledger_code)
+)
+
+alter table acc_ledgers add CONSTRAINT fkey_acc_ledgers_acc_group FOREIGN KEY (acc_group)
+        REFERENCES public.acc_groups (group_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+create table billdetail{
+id serial 
+branch_id int REFERENCES branch(id)
+product_id int REFERENCES product(productid)
+bill_id int REFERENCES bill(id)
+serial_no int
+time timestamp
+quantity int
+price numeric
+discount numeric
+tax_percent int 
+tax_amount numeric
+amount numeric
+cost_price numeric
+selling_price numeric
+mrp numeric
+profit numeric
+status boolean default true
+} 
+
+CREATE TABLE branch (
+  id serial,
+  name varchar,
+  phone varchar,
+  address1 text,
+  branch_no varchar,
+  address2 text,
+  pincode varchar,
+  mail varchar
+);
+insert into branch( 
+  name,
+  phone,
+  address1,
+  branch_no,
+  address2,
+  pincode,
+  mail
+) values('branch1', '8940427673', 'namakkal', 'tn001', 'namakkal', '637003', 'devapoonkl@gmail.com');
+
+
+create table bill(
+id serial,
+branch_id int unique REFERENCES branch(id),
+username varchar unique REFERENCES users(username),
+customer_id int unique REFERENCES customer(id),
+time timestamp,
+subtotal numeric,
+adjustment numeric,
+total numeric,
+status boolean default true,
+accounting_year numeric
+);
+
+
+create table customer(
+id serial,
+name varchar,
+phone_no varchar,
+address text,
+primary key(id)
+);
+
+alter table bill add constraint pk primary key(id);
+create table billdetail(
+id serial, 
+branch_id int  unique REFERENCES branch(id),
+product_id int unique REFERENCES product(productid),
+bill_id int unique REFERENCES bill(id),
+serial_no int,
+time timestamp,
+quantity int,
+price numeric,
+discount numeric,
+tax_percent int ,
+tax_amount numeric,
+amount numeric,
+cost_price numeric,
+selling_price numeric,
+mrp numeric,
+profit numeric,
+status boolean default true
+); 

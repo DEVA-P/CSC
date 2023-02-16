@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADMIN DASHBOARD</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+  <style>
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-family: "Raleway", sans-serif;
+    }
+
+    .container {
+      padding: 16px;
+      background-color: white;
+    }
+
+    .newGroup .material-icons {
+      font-size: 2.8rem;
+      color: rgb(95, 95, 255);
+      cursor: pointer;
+    }
+
+    .newLedger .material-icons {
+      font-size: 2.8rem;
+      color: cadetblue;
+      cursor: pointer;
+    }
+
+    /*.newCategory .material-icons {
+      font-size: 2.8rem;
+      color: rgb(255, 66, 66);
+      cursor: pointer;
+    }
+*/
+    button {
+      background-color: transparent;
+      border: none;
+    }
+
+    /* Full-width input fields */
+    .userInput,
+    .tableInput,
+    #parent_group,
+    #group {
+      width: 100%;
+      padding: 15px;
+      margin: 5px 0 22px 0;
+      display: inline-block;
+      border: none;
+      background: #f1f1f1;
+    }
+
+    .userInput:focus,
+    .tableInput:focus,
+    #parent_group:focus,
+    #group:focus {
+      background-color: #ddd;
+      outline: none;
+    }
+
+    .registerbtn {
+      background-color: #04aa6d;
+      color: white;
+      padding: 16px 20px;
+      margin: 8px 0;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      opacity: 0.9;
+    }
+
+    .alert {
+      padding: 20px;
+      background-color: #f44336;
+      color: white;
+      position: fixed;
+      width: 100%;
+      top: 75px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .closebtn {
+      margin-left: 15px;
+      color: white;
+      font-weight: bold;
+      float: right;
+      font-size: 22px;
+      line-height: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .closebtn:hover {
+      color: black;
+    }
+
+    .alter {
+      font-size: 25px;
+    }
+
+    .delete:hover {
+      color: red;
+      cursor: pointer;
+    }
+
+    .highlight {
+      background-color: lightblue;
+      font-weight: bold;
+    }
+  </style>
+
+<body class="w3-light-grey">
+  <div class="w3-bar w3-black w3-padding-large">
+    <a href="#" class="w3-bar-item w3-button rounded"><b>
+        ADMIN'S DASHBOARD
+      </b>
+    </a>
+
+    <div class="w3-dropdown-hover w3-right">
+      <button class="w3-button w3-black rounded">
+        <b>
+          <%=user.userName%>
+        </b>
+      </button>
+
+      <img class="mr-2 w3-circle" src="img/avatar.jpg" width="40" height="40" alt="avatar" />
+
+      <div class="w3-dropdown-content w3-bar-block w3-border" style="right: 0">
+        <a onclick="document.getElementById('edit-profile').style.display='block'"
+          class="w3-bar-item w3-button w3-padding-large">Edit profile</a>
+        <!-- #region for edit profile of user-->
+        <div id="edit-profile" class="w3-modal">
+          <div class="w3-modal-content w3-card-4">
+            <form action="#">
+              <header class="w3-container w3-teal">
+                <span onclick="document.getElementById('edit-profile').style.display='none'"
+                  class="w3-button w3-display-topright w3-xlarge">&times;</span>
+                <h2>EDIT PROFILE</h2>
+              </header>
+              <div class="container">
+                <label for="name"><b>Username</b></label>
+                <input class="userInput" type="text" name="name" id="name" required />
+                <!-- <label for="about"><b>Description</b></label>
+                <input type="text" placeholder="Enter course description" name="about" id="about" required> -->
+                <button type="submit" class="registerbtn">
+                  Edit profile
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <a onclick="logoutHandler()" class="w3-bar-item w3-button w3-padding-large">Log out</a>
+      </div>
+    </div>
+
+    <button class="newGroup w3-right" onclick="newGroup();">
+      <span class="material-icons"> add_circle </span>
+    </button>
+    <button class="newLedger w3-right" onclick="newLedger();">
+      <span class="material-icons"> add_circle </span>
+    </button>
+    <!-- <button class="newCategory w3-right" onclick="newCategory();">
+      <span class="material-icons"> add_circle </span>
+    </button> -->
+
+    <a href="/group" class="w3-bar-item w3-button w3-right"><b>Group</b></a>
+    <a href="/ledger" class="w3-bar-item w3-button w3-right"><b>Ledger</b></a>
+    <!-- <a href="/category" class="w3-bar-item w3-button w3-right"
+      ><b>Category</b></a
+    > -->
+
+  </div>
+
+  <div class="w3-content" style="max-width: 1400px">
+    <header class="w3-container w3-center w3-padding-32">
+      <h1><b>ADMIN VIEW</b></h1>
+      <p>Welcome to the CSC SHOP</p>
+    </header>
+
+    <div class="w3-container w3-center">
+      <div>
+        <canvas id="myChart" style="width:100%;max-width:600px;margin:auto;"></canvas>
+      </div>
+    </div>
+    <br>
+    <div class="w3-container">
+      <div class="w3-bar w3-black">
+        <% branch_detail.forEach(branch=> { %>
+          <button class="w3-bar-item w3-button tablink" onclick="openBranch(event,`<%=branch.branch_no%>`)"><b>
+              <%=branch.name%> - <%=branch.branch_no%>
+            </b></button>
+          <%})%>
+      </div>
+    </div>
+
+    <div id="Bill" class="w3-container">
+      <div class="w3-row">
+        <div class="w3-col container s12">
+          <div class="w3-content" style="max-width: 1400px">
+            <div class="w3-container">
+              <h1><b>BILL DETAILS</b></h1>
+              <table class="w3-table-all w3-margin-top" id="myTable">
+                <tr>
+                  <th style="width: 8%">BILL ID</th>
+                  <th style="width: 10%">BRANCH ID</th>
+                  <th style="width: 10%">EMPLOYEE</th>
+                  <th style="width: 10%">CUSTOMER</th>
+                  <th style="width: 16%">TIME</th>
+                  <th style="width: 10%">SUBTOTAL</th>
+                  <th style="width: 10%">ADJUSTMENT</th>
+                  <th style="width: 10%">TOTAL</th>
+                  <th style="width: 7%">STATUS</th>
+                  <th style="width: 7%">ACCOUNTING YEAR</th>
+                  <th style="width: 7%">PROFIT</th>
+                  <!-- <th style="width: 8%">EDIT</th>
+                  <th style="width: 8%">DELETE</th> -->
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!--ALERT -->
+    <div class="alert" id="aler">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      <div id="text"></div>
+    </div>
+    <!--ALERT -->
+
+
+    <!-- newGroup -->
+    <div id="addNewGroupModal" class="w3-modal">
+      <div class="w3-modal-content w3-card-4">
+        <form id="group_form" onsubmit="groupFormSubmitHandler(event);">
+          <header class="w3-container w3-teal">
+            <span onclick="document.getElementById('addNewGroupModal').style.display='none'"
+              class="w3-button w3-display-topright w3-xlarge">&times;</span>
+            <h2 id="form-title">ADD NEW GROUP</h2>
+          </header>
+          <div class="container">
+            <label for="group_name"><b>Group Name</b></label>
+            <input type="text" placeholder="Group Name" name="group_name" class="userInput" id="group_name" required />
+            <label for="group_code"><b>Search Code</b></label>
+            <input type="text" placeholder="Search Code for Group" name="group_code" id="group_code"
+              class="userInput" />
+            <label for="group_short_name"><b>Short Name</b></label>
+            <input type="text" placeholder="Short Name" name="group_short_name" class="userInput" id="group_short_name"
+              required />
+            <label for="company_id"><b>Company ID</b></label>
+            <input type="text" placeholder="Company ID" name="company_id" class="userInput" id="company_id" required />
+            <label for="parent_group"><b>Parent Group</b></label>
+            <select name="parent_group" id="parent_group">
+              <option class="option" value="1">1</option>
+            </select>
+            <label for="group_type"><b>Group-type</b></label>
+            <div class="w3-row-padding ">
+              <p class=" w3-half">
+                <input class="w3-radio" type="radio" name="type" value="credit" checked>
+                <label>Credit</label>
+              </p>
+              <p class=" w3-half">
+                <input class="w3-radio" type="radio" name="type" value="debit">
+                <label>Debit</label>
+              </p>
+            </div>
+
+            <button type="submit" id="form-button" class="registerbtn rounded">
+              Submit
+            </button>
+          </div>
+
+          <footer class="w3-container w3-teal">
+            <p>please verify before submission</p>
+          </footer>
+        </form>
+      </div>
+    </div>
+    <!-- newGroup -->
+
+
+    <!-- newLedger -->
+    <div id="addNewLedgerModal" class="w3-modal">
+      <div class="w3-modal-content w3-card-4">
+        <form id="ledger_form" onsubmit="ledgerFormSubmitHandler(event);">
+          <header class="w3-container w3-teal">
+            <span onclick="document.getElementById('addNewLedgerModal').style.display='none'"
+              class="w3-button w3-display-topright w3-xlarge">&times;</span>
+            <h2 id="form-title">ADD NEW LEDGER</h2>
+          </header>
+          <div class="container">
+            <label for="ledger_name"><b>Ledger Name</b></label>
+            <input type="text" placeholder="Ledger Name" name="ledger_name" class="userInput" id="ledger_name"
+              required />
+            <label for="ledger_short_name"><b>Ledger Short Name</b></label>
+            <input type="text" placeholder="Ledger Short Name" name="ledger_short_name" class="userInput"
+              id="ledger_short_name" required />
+            <label for="ledger_code"><b>Search Code</b></label>
+            <input type="text" placeholder="Search Code for Ledger" name="ledger_code" id="ledger_code"
+              class="userInput" />
+            <label for="group"><b>Group</b></label>
+            <select name="group" id="group">
+              <option class="option" value="1">1</option>
+            </select>
+            <label for="address1"><b>Address 1</b></label>
+            <input type="text" placeholder="Address 1" name="address1" id="address1" class="userInput" />
+            <label for="address2"><b>Address 2</b></label>
+            <input type="text" placeholder="Address 2" name="address2" id="address2" class="userInput" />
+            <label for="address3"><b>Address 3</b></label>
+            <input type="text" placeholder="Address 3" name="address3" id="address3  " class="userInput" />
+            <label for="email"><b>Email</b></label>
+            <input type="email" placeholder="Email" name="email" id="email" class="userInput" />
+            <label for="tel"><b>Tel</b></label>
+            <input type="tel" placeholder="tel" name="tel" id="tel" class="userInput" />
+            <label for="pincode"><b>Pincode</b></label>
+            <input type="text" placeholder="pincode" name="pincode" id="pincode" class="userInput" />
+            <label for="gst_type"><b>GST Type</b></label>
+            <select name="group" id="group">
+              <option class="option" value="1">1</option>
+            </select>
+
+
+            <button type="submit" id="form-button" class="registerbtn rounded">
+              Submit
+            </button>
+          </div>
+
+          <footer class="w3-container w3-teal">
+            <p>please verify before submission</p>
+          </footer>
+        </form>
+      </div>
+    </div>
+    <!-- newCategory -->
+
+</body>
+<script>
+  var aler = document.getElementById("aler");
+  aler.style.display = "none";
+  const modal1 = document.getElementById("edit-profile");
+  const modal2 = document.getElementById("addNewGroupModal");
+  const modal3 = document.getElementById("addNewLedgerModal");
+  const table = document.getElementById("myTable");
+
+  fillGraph();
+  function fillGraph() {
+    fetch("/bill/graph", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+      .then(handleError)
+      .then((res) => {
+        graph = res.results;
+        renderGraph(graph);
+      })
+      .catch((err) => {
+        modal3.style.display = "none";
+        aler.style.display = "block";
+        text.style.display = "block";
+        msg = "<strong>Danger !</strong>    " + err;
+        text.innerHTML = msg;
+      });
+  }
+
+  function renderGraph(graph) { 
+    /*var today = new Date();
+
+    // Calculate the start date and end date for the graph
+    var endDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    var startDate = new Date(endDate.getFullYear(), endDate.getMonth() - 5, 1);
+
+    // Create an array of dates for the x-axis labels
+    var xValues = [];
+    var currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      xValues.push(currentDate.toLocaleString('default', { month: 'short' }));
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+    */
+
+    // Create an array of profit values for the y-axis data
+    var profit_array = []// Replace with your actual data
+    var time_array = [];
+    graph.forEach((p)=>{
+      profit_array.push(p.profit);
+      time_array.push(p.time.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }).replace('T', ' ').replace('Z', ''));
+    });   
+
+    // Draw the chart
+    new Chart("myChart", {
+      type: "line",
+      data: {
+        labels: time_array,
+        datasets: [{
+          data: profit_array,
+          borderColor: "red",
+          fill: false
+        }]
+      },
+      options: {
+        legend: { display: false },
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+  }
+
+  function newGroup() {
+    document.getElementById("addNewGroupModal").style.display = "block";
+    //type = 'new';
+    document.getElementById("group_form").reset();
+    //formButton.innerText = 'Submit';
+    //formTitle.innerText = 'COURSE CREATION';
+  }
+  function newLedger() {
+    document.getElementById("addNewLedgerModal").style.display = "block";
+    //type = 'new';
+    document.getElementById("ledger_form").reset();
+    //formButton.innerText = 'Submit';
+    //formTitle.innerText = 'COURSE CREATION';
+  }
+
+  let bills = [];
+  fetchBills();
+
+  function fetchBills() {
+    fetch(`/bill/detail`, {
+      method: 'GET'
+    })
+      .then(handleError)
+      .then(res => {
+        bills = res.results;
+        renderTable(bills);
+      })
+      .catch(err => {
+        console.log(err)
+        aler.style.backgroundColor = "red"
+        aler.style.display = "block";
+        text.style.display = "block";
+        text.innerHTML = "<strong>Danger!</strong>       " + "Error : " + err;
+      })
+  }
+
+  function renderTable(bills) {
+    bills.forEach((bill, i) => {
+      let row = table.insertRow(i + 1);
+      let cell0 = row.insertCell(0);
+      let cell1 = row.insertCell(1);
+      let cell2 = row.insertCell(2);
+      let cell3 = row.insertCell(3);
+      let cell4 = row.insertCell(4);
+      let cell5 = row.insertCell(5);
+      let cell6 = row.insertCell(6);
+      let cell7 = row.insertCell(7);
+      let cell8 = row.insertCell(8);
+      let cell9 = row.insertCell(9);
+      let cell10 = row.insertCell(10);
+      cell0.textContent = bill.id;
+      cell1.textContent = bill.branch_id;
+      cell2.textContent = bill.username;
+      cell3.textContent = bill.customer_id == null ? '-' : bill.customer_id;
+      cell4.textContent = bill.time.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }).replace('T', ' ').replace('Z', '');
+      cell5.textContent = bill.subtotal;
+      cell6.textContent = bill.adjustment == null ? 0 : bill.adjustment;
+      cell7.textContent = bill.total;
+      cell8.textContent = bill.status;
+      cell9.textContent = bill.accounting_year == null ? "-" : bill.accounting_year;
+      cell10.textContent = bill.profit;
+    })
+  } 
+  
+  document.getElementsByClassName("tablink")[0].className += " w3-red";
+  //let activeBranch = 
+  function openBranch(evt, branch_no) {
+    var i, x, tablinks; 
+    tablinks = document.getElementsByClassName("tablink"); 
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
+    }
+    //document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " w3-red";
+  }
+
+  async function handleError(res) {
+    if (!res.ok) {
+      res = await res.json();
+      throw new Error(res.msg);
+    } else return res.json();
+  }
+
+  function logoutHandler() {
+    fetch("/logout")
+      .then(handleError)
+      .then((res) => {
+        window.location.href = "/login";
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  window.onclick = function (event) {
+    if (
+      event.target == modal1 ||
+      event.target == modal2 ||
+      event.target == modal3
+    ) {
+      modal1.style.display = "none";
+      modal2.style.display = "none";
+      modal3.style.display = "none";
+    }
+  };
+</script>
+
+</html>
